@@ -1,12 +1,16 @@
 {-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE NamedFieldPuns #-}
+
 module Level04.Types
   ( Error (..)
   , RqType (..)
   , ContentType (..)
   , Topic
   , CommentText
+  , CommentId(..)
   , Comment (..)
   , mkTopic
   , getTopic
@@ -29,10 +33,9 @@ import           Data.Functor.Contravariant ((>$<))
 import           Data.Time                  (UTCTime)
 import qualified Data.Time.Format           as TF
 
-import           Waargonaut.Encode          (Encoder)
-import qualified Waargonaut.Encode          as E
 
-import           Level04.DB.Types           (DBComment)
+
+import           Level04.DB.Types          
 
 -- | Notice how we've moved these types into their own modules. It's cheap and
 -- easy to add modules to carve out components in a Haskell application. So
@@ -44,6 +47,10 @@ import           Level04.Types.CommentText  (CommentText, getCommentText,
 import           Level04.Types.Topic        (Topic, getTopic, mkTopic)
 
 import           Level04.Types.Error        (Error (EmptyCommentText, EmptyTopic, UnknownRoute))
+import qualified Data.Aeson as Aeson
+import qualified Data.Aeson.Encoding as Aeson
+import Data.Aeson (ToJSON)
+import Level04.DB.Types
 
 newtype CommentId = CommentId Int
   deriving (Eq, Show)
@@ -59,16 +66,7 @@ data Comment = Comment
   }
   deriving Show
 
--- | We're going to write the JSON encoder for our `Comment` type. We'll need to
--- consult the documentation in the 'Waargonaut.Encode' module to find the
--- relevant functions and instructions on how to use them:
---
--- 'https://hackage.haskell.org/package/waargonaut/docs/Waargonaut-Encode.html'
---
-encodeComment :: Applicative f => Encoder f Comment
-encodeComment =
-  error "Comment JSON encoder not implemented"
-  -- Tip: Use the 'encodeISO8601DateTime' to handle the UTCTime for us.
+-- Implement Aeson.ToJSON for Comment
 
 -- | For safety we take our stored `DBComment` and try to construct a `Comment`
 -- that we would be okay with showing someone. However unlikely it may be, this
@@ -94,11 +92,5 @@ renderContentType
   -> ByteString
 renderContentType PlainText = "text/plain"
 renderContentType JSON      = "application/json"
-
-encodeISO8601DateTime :: Applicative f => Encoder f UTCTime
-encodeISO8601DateTime = pack . TF.formatTime loc fmt >$< E.text
-  where
-    fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
-    loc = TF.defaultTimeLocale { TF.knownTimeZones = [] }
 
 -- | Move on to ``src/Level04/DB.hs`` next.
