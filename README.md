@@ -1,4 +1,10 @@
-# Applied Functional Programming Course
+# Applied Functional Programming Course - fork
+
+Changed wargonaut decoding into aeson decoding.
+
+
+Ghcid tests: `ghcid --command="cabal repl app-fp-tests" -r`
+
 
 [![Build Status](https://travis-ci.org/qfpl/applied-fp-course.svg?branch=master)](https://travis-ci.org/qfpl/applied-fp-course)
 
