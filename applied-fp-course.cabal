@@ -54,7 +54,6 @@ library
     , text                  ^>=1.2
     , time                  >=1.4  && <1.10
     , transformers          >=0.4  && <0.6
-    , waargonaut            >=0.6  && <0.9
     , wai                   >=3.2  && <3.4
     , warp                  >=3.2  && <3.4
     , aeson
