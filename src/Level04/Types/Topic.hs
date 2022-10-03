@@ -4,9 +4,6 @@ module Level04.Types.Topic (
   getTopic,
 ) where
 
-import Waargonaut.Encode (Encoder)
-import qualified Waargonaut.Encode as E
-
 import Data.Functor.Contravariant (contramap)
 import Data.Text (Text)
 

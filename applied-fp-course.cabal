@@ -33,7 +33,6 @@ library
     Level04.Types.CommentText
     Level04.Types.Error
     Level04.Types.Topic
-   
 
   ghc-options:
     -Wall -fno-warn-unused-binds -fno-warn-unused-do-bind
@@ -93,6 +92,16 @@ test-suite app-fp-tests
     , sqlite-simple-errors  ^>=0.6
     , time                  >=1.4  && <1.10
     , warp                  >=3.2  && <3.4
+  other-modules:
+    Level04.Conf
+    Level04.Core
+    Level04.DB
+    Level04.DB.Types
+    Level04.Types
+    Level04.Types.CommentText
+    Level04.Types.Error
+    Level04.Types.Topic
+   
 
 -- Level Executables
 executable level01-exe
