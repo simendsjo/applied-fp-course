@@ -5,6 +5,8 @@ import           Data.Text                      (Text)
 import           Data.Time                      (UTCTime)
 
 import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
+import Level02.Types (Topic)
+import Level04.Types.CommentText (CommentText)
 
 -- To try to avoid leaking various types and expected functionality around the
 -- application, we create a stand alone type that will represent the data we
@@ -15,6 +17,13 @@ import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 -- Comment type, but without the newtype wrappers for each value. To get started,
 -- just copy the new definition for the `Comment` type from Level04.Types.
 data DBComment = DBComment
+  { dbCommentId    :: Int
+  , dbCommentTopic :: Text
+  , dbCommentBody  :: Text
+  , dbCommentTime  :: UTCTime
+  }
+  deriving Show
+
   -- NB: Haskell does not allow duplicate field names for records so the field
   -- names for this type will have to be slightly different
 

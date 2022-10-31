@@ -23,6 +23,9 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           Level04.Types                      (Comment, CommentText,
                                                      Error, Topic)
+import qualified Database.SQLite.SimpleErrors as Sql
+import Network.HTTP.Types (ok200)
+import qualified Database.SQLite.SimpleErrors as Sql
 
 -- ------------------------------------------------------------------------------|
 -- You'll need the documentation for sqlite-simple & sqlite-simple-errors handy! |
@@ -43,8 +46,8 @@ data FirstAppDB = FirstAppDB
 closeDB
   :: FirstAppDB
   -> IO ()
-closeDB =
-  error "closeDB not implemented"
+closeDB (FirstAppDB cn) =
+  Sql.close cn
 
 -- Given a `FilePath` to our SQLite DB file, initialise the database and ensure
 -- our Table is there by running a query to create it, if it doesn't exist
@@ -52,8 +55,13 @@ closeDB =
 initDB
   :: FilePath
   -> IO ( Either SQLiteResponse FirstAppDB )
-initDB fp =
-  error "initDB not implemented (use Sql.runDBAction to catch exceptions)"
+initDB fp = do
+  -- error "initDB not implemented (use Sql.runDBAction to catch exceptions)"
+  cn <- Sql.open fp
+  res <- Sql.runDBAction $ execute_ cn createTableQ
+  case res of
+    Right ok -> Right $ FirstAppDB cn
+    Left err -> Left err
   where
   -- Query has an `IsString` instance so string literals like this can be
   -- converted into a `Query` type when the `OverloadedStrings` language
@@ -74,7 +82,7 @@ getComments
   :: FirstAppDB
   -> Topic
   -> IO (Either Error [Comment])
-getComments =
+getComments (FirstAppDB cn) =
   let
     sql = "SELECT id,topic,comment,time FROM comments WHERE topic = ?"
   -- There are several possible implementations of this function. Particularly
@@ -82,6 +90,9 @@ getComments =
   -- cannot be converted to a Comment, or simply ignoring any DBComment that is
   -- not valid.
   in
+    Sql.runDBAction cn sql
+    >>= (res -> case res of)
+    case
     error "getComments not implemented (use Sql.runDBAction to catch exceptions)"
 
 addCommentToTopic

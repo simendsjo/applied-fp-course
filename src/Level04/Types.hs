@@ -35,7 +35,8 @@ import qualified Data.Time.Format           as TF
 
 
 
-import           Level04.DB.Types          
+import           Level04.DB.Types
+import           Level04.Types          (Topic, CommentText)
 
 -- | Notice how we've moved these types into their own modules. It's cheap and
 -- easy to add modules to carve out components in a Haskell application. So
@@ -51,6 +52,8 @@ import qualified Data.Aeson as Aeson
 import qualified Data.Aeson.Encoding as Aeson
 import Data.Aeson (ToJSON)
 import Level04.DB.Types
+import Data.Aeson.Types (object)
+import Data.Aeson ((.=))
 
 newtype CommentId = CommentId Int
   deriving (Eq, Show)
@@ -67,6 +70,12 @@ data Comment = Comment
   deriving Show
 
 -- Implement Aeson.ToJSON for Comment
+instance ToJSON Comment where
+  toJSON (Comment (CommentId ident) topic body time) =
+    object [ "id"    .= ident
+           , "topic" .= topic
+           , "body"  .= body
+           , "time"  .= time ]
 
 -- | For safety we take our stored `DBComment` and try to construct a `Comment`
 -- that we would be okay with showing someone. However unlikely it may be, this
@@ -75,8 +84,8 @@ data Comment = Comment
 fromDBComment
   :: DBComment
   -> Either Error Comment
-fromDBComment =
-  error "fromDBComment not yet implemented"
+fromDBComment (DBComment ident topic body time) =
+  Right $ Comment (CommentId ident) (Topic topic) (CommentText body) time
 
 data RqType
   = AddRq Topic CommentText
